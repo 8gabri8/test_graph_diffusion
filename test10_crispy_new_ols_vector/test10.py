@@ -6,6 +6,22 @@ import pandas as pd
 import csv
 from nigsp.operations.timeseries import resize_ts
 
+def display_table(headers, data):
+    # Calculate the maximum width for each column
+    column_widths = [max(len(str(item)) for item in col) for col in zip(headers, *data)]
+    
+    # Print table headers
+    print("\n")
+    print(" | ".join(f"{header:<{width}}" for header, width in zip(headers, column_widths)))
+    
+    # Print table separator
+    print("-" * (sum(column_widths) + len(headers) * 3 - 1))
+    
+    # Print table rows
+    for row in data:
+        print(" | ".join(f"{item:<{width}}" for item, width in zip(row, column_widths)))
+    print("\n")
+
 """"
 verify that the result of "crispy_new_ols_vector" (ie the E) are the same of when we pass single nodes to normal scirpt
 """
@@ -62,14 +78,29 @@ E_ols_vector = io.load_txt("ols_vector/files/sub-1_ts-innov.tsv.gz")
 fig, axes = plt.subplots(2, 3, figsize=(10, 10))
 axes = axes.flatten()
 pos_0 = axes[0].imshow(E_single, interpolation='nearest', vmin=-1, vmax=1, aspect='auto'); axes[0].set_title("E_single")
-pos_1 =axes[1].imshow(E_total, interpolation='nearest', vmin=-1, vmax=1, aspect='auto'); axes[1].set_title("E_all")
+pos_1 =axes[1].imshow(E_total, interpolation='nearest', vmin=-1, vmax=1, aspect='auto'); axes[1].set_title("E_total")
 pos_2 = axes[2].imshow(E_ols_vector, interpolation='nearest', vmin=-1, vmax=1, aspect='auto'); axes[2].set_title("E_ols_vector")
 pos_3 = axes[3].imshow(np.abs(E_ols_vector - E_single), interpolation='nearest', vmin=0, vmax=1, aspect='auto'); axes[3].set_title("abs(E_ols_vector - E_single)")
 pos_4 = axes[4].imshow(np.abs(E_ols_vector - E_total), interpolation='nearest', vmin=0, vmax=1, aspect='auto'); axes[4].set_title("abs(E_ols_vector - E_total)")
-axes[5].axis("off")
+pos_5 = axes[5].imshow(np.abs(E_single - E_total), interpolation='nearest', vmin=0, vmax=1, aspect='auto'); axes[5].set_title("abs(E_single - E_total)")
 #fig.colorbar(cax = axes[5], ax=np.array(axes[0], axes[3]))#; fig.colorbar(pos_5, ax=axes[3]); fig.colorbar(pos_2, ax=axes[2])
-cbar4 = fig.colorbar(pos_4, ax=axes[5], pad=0.3)
-cbar0 = fig.colorbar(pos_0, ax=axes[5], pad=5)
+#cbar4 = fig.colorbar(pos_4, ax=axes[5], pad=0.3)
+#cbar0 = fig.colorbar(pos_0, ax=axes[5], pad=5)
+
+
+headers = ["case", "max", "mean"]
+data = [
+    ["np.abs(E_ols_vector - E_single)", np.max(np.abs(E_ols_vector - E_single)), np.mean(np.abs(E_ols_vector - E_single))],
+    ["np.abs(E_ols_vector - E_total)", np.max(np.abs(E_ols_vector - E_total)), np.mean(np.abs(E_ols_vector - E_total))]
+]
+# print("{:<15} {:<10} {:<20}".format(headers[0], headers[1], headers[2]))
+# print("-" * 45)  # Print a line separator
+# for row in data:
+#     print("{:<15} {:<10} {:<20}".format(row[0], row[1], row[2]))
+display_table(headers, data)
+
+
+
 plt.tight_layout()
 fig.savefig("single_Vs_all.png")
 plt.show() 

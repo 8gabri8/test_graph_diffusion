@@ -16,7 +16,7 @@ calcultaions = False
 weights = np.arange(0, 1.1, 0.1)
 
 if calcultaions:
-        #creteas directiories
+    #creteas directiories
     if not os.path.exists("matrices_lesion"):
      os.mkdir("matrices_lesion")
     if not os.path.exists("matrices_paz"):
@@ -60,9 +60,21 @@ if calcultaions:
     #plot the matrices
     fig, ax = plt.subplots(2, len(all_lesion), figsize=(10,5))
     for i, w in enumerate(labels):
-        ax[0,i].matshow(all_paz[i][a:b, a:b], vmin=-1, vmax=1); ax[0,i].axis('off'); ax[0,i].set_title(f'paz_{w}')
+        ax[0,i].matshow(all_paz[i][a:b, a:b], vmin=-1, vmax=1, aspect='auto'); ax[0,i].axis('off'); ax[0,i].set_title(f'paz_{w}')
          #NB if don't insert vmin/vmax you cannot see the differences
-        ax[1,i].matshow(all_lesion[i][a:b, a:b], vmin=-1, vmax=1); ax[1,i].axis('off'); ax[1,i].set_title(f'lesion_{w}')
+        ax[1,i].matshow(all_lesion[i][a:b, a:b], vmin=-1, vmax=1, aspect='auto'); ax[1,i].axis('off'); ax[1,i].set_title(f'lesion_{w}')
+    fig.suptitle("zoom on lesioned region both on paz and lesioned part")
+    plt.tight_layout()
+    #fig.subplots_adjust(left=0.1, right=0.9, bottom=0.1, top=0.9, wspace=0.4, hspace=0.001)
+    fig.savefig("zoom_matrices.png")
+    plt.show()
+
+    #plot the matrices
+    fig, ax = plt.subplots(2, len(all_lesion), figsize=(15,10))
+    for i, w in enumerate(labels):
+        ax[0,i].matshow(all_paz[i], vmin=-1, vmax=1, aspect='auto'); ax[0,i].axis('off'); ax[0,i].set_title(f'paz_{w}')
+         #NB if don't insert vmin/vmax you cannot see the differences
+        ax[1,i].matshow(all_lesion[i], vmin=-1, vmax=1, aspect='auto'); ax[1,i].axis('off'); ax[1,i].set_title(f'lesion_{w}')
     plt.tight_layout()
     #fig.subplots_adjust(left=0.1, right=0.9, bottom=0.1, top=0.9, wspace=0.4, hspace=0.001)
     fig.savefig("matrices.png")
@@ -105,7 +117,7 @@ fig, ax = plt.subplots(1, 1)
 ax.bar(cn - width, taus_lesion, label="lesion", width=width)
 ax.bar(cn + width, taus_paz, label="paz", width=width)
 plt.xticks(cn, labels)
-plt.xlabel('size hole(lesion)')
+plt.xlabel('weight')
 plt.ylabel('tau')
 plt.legend()
 
